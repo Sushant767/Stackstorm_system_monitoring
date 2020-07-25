@@ -3,7 +3,7 @@
       name: "check_process"
       ref: "core.local"
       params:
-         cmd: "mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf("%d%%",100 - $field) }'"
+         cmd: "mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf(100 - $field) }'"
       publish:
          analysis: "{{check_process.stdout}}"
       on-success: "post_to_slack"
