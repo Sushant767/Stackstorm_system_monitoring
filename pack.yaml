@@ -1,0 +1,7 @@
+---
+ref : new_proj
+name : new_proj
+description : Demos workflows and rules
+version : 3.2.0
+author : st2-dev
+email : info@stackstorm.com

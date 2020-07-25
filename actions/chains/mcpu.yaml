@@ -1,0 +1,18 @@
+  chain:
+    -
+      name: "check_process"
+      ref: "core.local"
+      params:
+         cmd: "mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf("%d%%",100 - $field) }'"
+      publish:
+         analysis: "{{check_process.stdout}}"
+      on-success: "post_to_slack"
+      
+    -
+     
+      name: "post_to_slack"
+      ref: "chatops.post_message"
+      params:
+        channel: "#mychannel"
+        message: "Stackstorm got a cpu alert & has got top 5 cpu consuming processes on localhost Details:\n{{analysis}}"
+  default: "check_process"
