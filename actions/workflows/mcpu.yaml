@@ -18,7 +18,7 @@ tasks:
   task1:
     action: core.local cmd=<% ctx(cmd) %>
     next:
-      - when: <% succeeded() and result().stdout >= 40 %>
+      - when: <% succeeded() and result().stdout <= 40 %>
         publish: stdout=<% result().stdout %>
         do:
           - post_success_to_slack
