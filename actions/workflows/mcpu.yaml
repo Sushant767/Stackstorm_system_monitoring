@@ -7,28 +7,48 @@ description: >
     workflow execution will fail as a result.
 
 input:
-  - cmd
-
+  - cmd1
+  - cmd2
 
 vars:
   - stdout: null
-
+  - stdout1: null
 
 tasks:
   task1:
-    action: core.local cmd=<% ctx(cmd) %>
+    action: core.local cmd=<% ctx(cmd1) %>
     next:
       - when: <% succeeded() and result().stdout <= 40 %>
         publish: stdout=<% result().stdout %>
         do:
           - post_success_to_slack
+      - when: <% succeeded() and result().stdout >= 40 %>
+        publish: stdout=<% result().stdout %>
+        do: 
+          -perform_cpu_check
      
   post_success_to_slack:
     action: chatops.post_message
     input:
       channel: 'mychannel'
-      message: "Stackstorm got a cpu alert & has got top 5 cpu consuming processes on localhost Details:\n<% ctx(stdout) %>"
+      message: "cpu is underutilized on localhost Details:\n<% ctx(stdout) %>"
+  
+  perform_cpu_check:
+    action: core.local cmd=<% ctx(cmd2) %>
+    next:
+      - when: <% succeeded() %>
+        publish: stdout1=<% result().stdout %>
+        do:
+          -  post_excess_cpu_to_slack
+ 
+  post_excess_cpu_to_slack:
+     action: chatops.post_message
+     input:
+      channel: 'mychannel'
+      message: "Stackstorm got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.Details:\n<% ctx(stdout1) %>"
+    
+   
 output:
-  - stdout: <% ctx(stdout) %>
+  - stdout: Overall average cpu consumption - <% ctx(stdout) %> %
 
 
