@@ -61,7 +61,6 @@ tasks:
       channel: 'mychannel'
       message: "Stackstorm has got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.Details:\n<% ctx(var_res_cpu) %>"
     
-   
    task2:
     action: core.local cmd=<% ctx(cmd_mem) %>
     next:
@@ -73,7 +72,7 @@ tasks:
         publish: var_mem=<% result().stdout %>
         do: 
           - perform_mem_analysis
-     - when: <% failed() %>
+      - when: <% failed() %>
         publish: stderr_mem=<% result().stderr %>
         do:
           - post_error_to_slack
