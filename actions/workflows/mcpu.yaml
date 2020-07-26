@@ -20,8 +20,14 @@ tasks:
     next:
       - when: <% succeeded() %>
         publish: stdout=<% result().stdout %>
+        do:
+          - post_success_to_slack
      
-
+  post_success_to_slack:
+    action: chatops.post_message
+    input:
+      channel: 'mychannel'
+      message: "Stackstorm got a cpu alert & has got top 5 cpu consuming processes on localhost Details:\n<% ctx(stdout) %>"
 output:
   - stdout: <% ctx(stdout) %>
 
