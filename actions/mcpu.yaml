@@ -1,17 +1,15 @@
 
 name: mcpu
 pack: new_proj
-description: "Run a series of simulated actions"
+description: Run a series of simulated actions
 enabled: true
-runner_type: "action-chain"
-entry_point: "chains/mcpu.yaml"
+runner_type: orquesta
+entry_point: workflows/mcpu.yaml
 
 parameters:
- 
-  alert_message:
-      type: "string"
-      description: "Alert message as passed from monitoring system"
-      default: ""
-
+    cmd:
+       required: true
+       type: string
+       default: ps -eo pid,pcpu,user,args --sort=-%cpu | head -6 | head -c 1000
 
 

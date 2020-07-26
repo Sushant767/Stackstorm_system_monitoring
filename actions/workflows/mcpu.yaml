@@ -1,0 +1,28 @@
+version: 3.2.0
+
+description: >
+    A workflow example that illustrates error handling. In this case, the "continue"
+    command is explicit. When there is a task failure, the "continue" command will
+    process the publish and then cascade the task failure to the workflow and the
+    workflow execution will fail as a result.
+
+input:
+  - cmd
+
+
+vars:
+  - stdout: null
+
+
+tasks:
+  task1:
+    action: core.local cmd=<% ctx(cmd) %>
+    next:
+      - when: <% succeeded() %>
+        publish: stdout=<% result().stdout %>
+     
+
+output:
+  - stdout: <% ctx(stdout) %>
+
+
