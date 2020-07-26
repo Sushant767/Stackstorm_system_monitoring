@@ -1,54 +1,57 @@
 version: 1.0
 
 description: >
-    A workflow example that illustrates error handling. In this case, the "continue"
-    command is explicit. When there is a task failure, the "continue" command will
-    process the publish and then cascade the task failure to the workflow and the
-    workflow execution will fail as a result.
-
+    A workflow that monitors average cpu consumption and memory usages. If any of these parameters go beyond threshold it generates an alert to the slack channel-"mychannel".
 input:
-  - cmd1
-  - cmd2
+  - cmd_cpu
+  - cmd_results_cpu
   - cmd_mem
-  - cmd1_mem
+  - cmd_results_mem
 
 vars:
-  - stdout: null
-  - stdout1: null
-  - mem: null
-  - mem1: null
+  - var_cpu: null
+  - var_res_cpu: null
+  - var_mem: null
+  - var_res_mem: null 
+  - stderr_cpu: null
+  - stderr_mem: null
 
 tasks:
 
    setup_task:
+     #parallel task for cpu and memory monitoring
      next:
       - do:
-          - task1
-          - task2 
+          - task_cpu
+          - task_mem
    
-   task1:
-    action: core.local cmd=<% ctx(cmd1) %>
+   task_cpu:
+    action: core.local cmd=<% ctx(cmd_cpu) %>
     next:
       - when: <% succeeded() and result().stdout <= 20 %>
-        publish: stdout=<% result().stdout %>
+        publish: var_cpu=<% result().stdout %>
         do:
-          - post_success_to_slack
+          - post_cpu_success_to_slack
       - when: <% succeeded() and result().stdout >= 20 %>
-        publish: stdout=<% result().stdout %>
+        publish: var_cpu=<% result().stdout %>
         do: 
-          - perform_cpu_check
+          - perform_cpu_analysis
+      - when: <% failed() %>
+        publish: stderr_cpu=<% result().stderr %>
+        do:
+          - post_error_to_slack
      
-   post_success_to_slack:
+   post_cpu_success_to_slack :
     action: chatops.post_message
     input:
       channel: 'mychannel'
-      message: "cpu is underutilized on localhost Details:\n<% ctx(stdout) %>"
+      message: "cpu is underutilized on localhost.Details:\n<% ctx( var_cpu) %>"
   
-   perform_cpu_check:
-    action: core.local cmd=<% ctx(cmd2) %>
+   perform_cpu_analysis:
+    action: core.local cmd=<% ctx(cmd_results_cpu) %>
     next:
       - when: <% succeeded() %>
-        publish: stdout1=<% result().stdout %>
+        publish: var_res_cpu=<% result().stdout %>
         do:
           -  post_excess_cpu_to_slack
  
@@ -56,45 +59,58 @@ tasks:
      action: chatops.post_message
      input:
       channel: 'mychannel'
-      message: "Stackstorm got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.Details:\n<% ctx(stdout1) %>"
+      message: "Stackstorm has got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.Details:\n<% ctx(var_res_cpu) %>"
     
    
    task2:
     action: core.local cmd=<% ctx(cmd_mem) %>
     next:
       - when: <% succeeded() and result().stdout <= 40 %>
-        publish: mem=<% result().stdout %>
+        publish: var_mem=<% result().stdout %>
         do:
-          - success_to_slack
+          - post_mem_success_to_slack
       - when: <% succeeded() and result().stdout >= 40 %>
-        publish: mem=<% result().stdout %>
+        publish: var_mem=<% result().stdout %>
         do: 
-          - memory_check
+          - perform_mem_analysis
+     - when: <% failed() %>
+        publish: stderr_mem=<% result().stderr %>
+        do:
+          - post_error_to_slack
    
-   success_to_slack:
+   post_mem_success_to_slack:
      action: chatops.post_message
      input:
       channel: 'mychannel'
-      message: "memory is underutilized on localhost Details:\n<% ctx(mem) %>"
+      message: "memory is underutilized on localhost Details:\n<% ctx(var_mem) %>"
   
-   memory_check:
-    action: core.local cmd=<% ctx(cmd1_mem) %>
+   perform_mem_analysis:
+    action: core.local cmd=<% ctx(cmd_results_mem) %>
     next:
       - when: <% succeeded() %>
-        publish: mem1=<% result().stdout %>
+        publish: var_res_mem=<% result().stdout %>
         do:
-          -  excess_memory_to_slack
+          -  post_excess_mem_to_slack
  
-   excess_memory_to_slack:
+   post_excess_mem_to_slack:
      action: chatops.post_message
      input:
       channel: 'mychannel'
-      message: "Stackstorm got a memory usage alert & memory is over_utilized & has got top 5 memory consuming processes on localhost.Details:\n<% ctx(mem1) %>"
+      message: "Stackstorm got a memory usage alert & memory is over_utilized & has got top 5 memory consuming processes on localhost.Details:\n<% ctx(var_res_mem) %>"
     
+   post_error_to_slack:
+     action: chatops.post_message
+     input:
+      channel: '#mychannel'
+      message: "Something has gone wrong with stackstorm"
   
 
 output:
-  - stdout: Overall average cpu consumption - <% ctx(stdout) %> %
-  - mem: Overall average memory usage - <% ctx(mem) %> %
+  - Overall average cpu consumption - <% ctx(var_cpu) %> %
+  - Overall average memory usage - <% ctx(var_mem) %> %
+  - stderr_cpu: <% ctx(stderr_cpu) %>
+  - stderr_mem: <% ctx(stderr_mem) %>
+
+
 
 

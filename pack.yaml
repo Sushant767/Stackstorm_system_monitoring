@@ -1,7 +1,7 @@
 ---
 ref : new_proj
 name : new_proj
-description : Demos workflows and rules
+description : A workflow that monitors average cpu consumption and memory usages. If any of these parameters go beyond threshold it generates an alert to the slack channel-"mychannel".
 version : 3.2.0
-author : st2-dev
-email : info@stackstorm.com
+author : Sushant Kumar
+email : skumar5@ee.iitr.ac.in
