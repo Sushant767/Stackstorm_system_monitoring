@@ -25,7 +25,7 @@ tasks:
       - when: <% succeeded() and result().stdout >= 40 %>
         publish: stdout=<% result().stdout %>
         do: 
-          -perform_cpu_check
+          - perform_cpu_check
      
   post_success_to_slack:
     action: chatops.post_message
