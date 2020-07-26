@@ -10,10 +10,18 @@ parameters:
     cmd1:
        required: true
        type: string
-       default: mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf(100 - $field) }'
+       default:  mpstat 1 5 | awk 'END{print 100-$NF"%"}'
     cmd2:
        required: true
        type: string
        default: ps -eo pid,pcpu,user,args --sort=-%cpu | head -6 | head -c 1000
+    cmd_mem:
+       required: true
+       type: string
+       default:  free | awk 'FNR == 3 {print $3/($3+$4)*100}'
+    cmd1_mem:
+       required: true
+       type: string
+       default: ps -eo pid,ppid,cmd,%mem --sort=-%mem | head
 
 

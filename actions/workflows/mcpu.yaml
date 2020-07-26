@@ -9,20 +9,30 @@ description: >
 input:
   - cmd1
   - cmd2
+  - cmd_mem
+  - cmd1_mem
 
 vars:
   - stdout: null
   - stdout1: null
+  - mem: null
+  - mem1: null
 
 tasks:
+
+   setup_task:
+     next:
+      - do:
+          - task1
+          - task2 
   task1:
     action: core.local cmd=<% ctx(cmd1) %>
     next:
-      - when: <% succeeded() and result().stdout <= 40 %>
+      - when: <% succeeded() and result().stdout <= 20 %>
         publish: stdout=<% result().stdout %>
         do:
           - post_success_to_slack
-      - when: <% succeeded() and result().stdout >= 40 %>
+      - when: <% succeeded() and result().stdout >= 20 %>
         publish: stdout=<% result().stdout %>
         do: 
           - perform_cpu_check
@@ -48,7 +58,42 @@ tasks:
       message: "Stackstorm got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.Details:\n<% ctx(stdout1) %>"
     
    
+  task2:
+    action: core.local cmd=<% ctx(cmd_mem) %>
+    next:
+      - when: <% succeeded() and result().stdout <= 20 %>
+        publish: mem=<% result().stdout %>
+        do:
+          - success_to_slack
+      - when: <% succeeded() and result().stdout >= 20 %>
+        publish: mem=<% result().stdout %>
+        do: 
+          - memory_check
+   
+   success_to_slack:
+     action: chatops.post_message
+     input:
+      channel: 'mychannel'
+      message: "memory is underutilized on localhost Details:\n<% ctx(mem) %>"
+  
+   memory_check:
+    action: core.local cmd=<% ctx(cmd1_mem) %>
+    next:
+      - when: <% succeeded() %>
+        publish: mem1=<% result().stdout %>
+        do:
+          -  excess_memory_to_slack
+ 
+   excess_memory_to_slack:
+     action: chatops.post_message
+     input:
+      channel: 'mychannel'
+      message: "Stackstorm got a memory usage alert & memory is over_utilized & has got top 5 memory consuming processes on localhost.Details:\n<% ctx(mem1) %>"
+    
+  
+
 output:
   - stdout: Overall average cpu consumption - <% ctx(stdout) %> %
+  - mem: Overall average memory usage - <% ctx(mem) %> %
 
 
