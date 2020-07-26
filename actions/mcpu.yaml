@@ -10,6 +10,6 @@ parameters:
     cmd:
        required: true
        type: string
-       default: ps -eo pid,pcpu,user,args --sort=-%cpu | head -6 | head -c 1000
+       default: mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf(100 - $field) }'
 
 
