@@ -25,7 +25,8 @@ tasks:
       - do:
           - task1
           - task2 
-  task1:
+   
+   task1:
     action: core.local cmd=<% ctx(cmd1) %>
     next:
       - when: <% succeeded() and result().stdout <= 20 %>
@@ -37,13 +38,13 @@ tasks:
         do: 
           - perform_cpu_check
      
-  post_success_to_slack:
+   post_success_to_slack:
     action: chatops.post_message
     input:
       channel: 'mychannel'
       message: "cpu is underutilized on localhost Details:\n<% ctx(stdout) %>"
   
-  perform_cpu_check:
+   perform_cpu_check:
     action: core.local cmd=<% ctx(cmd2) %>
     next:
       - when: <% succeeded() %>
@@ -51,21 +52,21 @@ tasks:
         do:
           -  post_excess_cpu_to_slack
  
-  post_excess_cpu_to_slack:
+   post_excess_cpu_to_slack:
      action: chatops.post_message
      input:
       channel: 'mychannel'
       message: "Stackstorm got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.Details:\n<% ctx(stdout1) %>"
     
    
-  task2:
+   task2:
     action: core.local cmd=<% ctx(cmd_mem) %>
     next:
-      - when: <% succeeded() and result().stdout <= 20 %>
+      - when: <% succeeded() and result().stdout <= 40 %>
         publish: mem=<% result().stdout %>
         do:
           - success_to_slack
-      - when: <% succeeded() and result().stdout >= 20 %>
+      - when: <% succeeded() and result().stdout >= 40 %>
         publish: mem=<% result().stdout %>
         do: 
           - memory_check
