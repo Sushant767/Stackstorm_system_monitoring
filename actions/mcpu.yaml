@@ -10,7 +10,7 @@ parameters:
     cmd1:
        required: true
        type: string
-       default:  mpstat 1 5 | awk 'END{print 100-$NF"%"}'
+       default:  mpstat 1 5 | awk 'END{print 100-$NF}'
     cmd2:
        required: true
        type: string
