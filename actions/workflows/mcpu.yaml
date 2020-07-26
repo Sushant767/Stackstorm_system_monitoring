@@ -45,7 +45,7 @@ tasks:
     action: chatops.post_message
     input:
       channel: 'mychannel'
-      message: "cpu is underutilized on localhost.Details:\n<% ctx( var_cpu) %>"
+      message: "cpu is under_utilized on localhost.\nDetails:\nOverall average cpu usage :<% ctx( var_cpu) %> %"
   
    perform_cpu_analysis:
     action: core.local cmd=<% ctx(cmd_results_cpu) %>
@@ -59,7 +59,7 @@ tasks:
      action: chatops.post_message
      input:
       channel: 'mychannel'
-      message: "Stackstorm has got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.Details:\n<% ctx(var_res_cpu) %>"
+      message: "Stackstorm has got a cpu alert & cpu is over_utilized & has got top 5 cpu consuming processes on localhost.\nDetails:\n<% ctx(var_res_cpu) %> "
     
    task_mem:
     action: core.local cmd=<% ctx(cmd_mem) %>
@@ -81,7 +81,7 @@ tasks:
      action: chatops.post_message
      input:
       channel: 'mychannel'
-      message: "memory is underutilized on localhost Details:\n<% ctx(var_mem) %>"
+      message: "memory is underutilized on localhost.\nDetails:\nOverall memory usage :<% ctx(var_mem) %> %"
   
    perform_mem_analysis:
     action: core.local cmd=<% ctx(cmd_results_mem) %>
@@ -95,7 +95,7 @@ tasks:
      action: chatops.post_message
      input:
       channel: 'mychannel'
-      message: "Stackstorm got a memory usage alert & memory is over_utilized & has got top 5 memory consuming processes on localhost.Details:\n<% ctx(var_res_mem) %>"
+      message: "Stackstorm got a memory usage alert & memory is over_utilized & has got top 5 memory consuming processes on localhost.\nDetails:\n<% ctx(var_res_mem) %> "
     
    post_error_to_slack:
      action: chatops.post_message
@@ -106,7 +106,7 @@ tasks:
 
 output:
   - var_cpu: Overall average cpu consumption - <% ctx(var_cpu) %> %
-  - var_mem: Overall average memory usage - <% ctx(var_mem) %> %
+  - var_mem: Overall memory usage - <% ctx(var_mem) %> %
   - stderr_cpu: <% ctx(stderr_cpu) %>
   - stderr_mem: <% ctx(stderr_mem) %>
 
