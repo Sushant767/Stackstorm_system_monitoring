@@ -17,7 +17,7 @@ class System_Sensor(Sensor):
             self._logger.debug('System_Sensor dispatching trigger')
             payload = {'Monitoring': 'Monitoring operation performed on system'}
             self.sensor_service.dispatch(trigger='new_proj.event1', payload=payload)
-            eventlet.sleep(seconds = 600)
+            eventlet.sleep(seconds = 60)
 
     def cleanup(self):
         self._stop = True
