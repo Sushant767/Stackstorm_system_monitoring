@@ -1,10 +1,10 @@
 import eventlet
+import os
+from st2reactor.sensor.base import PollingSensor
 
-from st2reactor.sensor.base import Sensor
 
-
-class System_Sensor(Sensor):
-    def __init__(self, sensor_service, config):
+class System_Sensor(PollingSensor):
+    def __init__(self, sensor_service, config,poll_interval=5):
         super(HelloSensor, self).__init__(sensor_service=sensor_service, config=config)
         self._logger = self.sensor_service.get_logger(name=self.__class__.__name__)
         self._stop = False
@@ -12,17 +12,16 @@ class System_Sensor(Sensor):
     def setup(self):
         pass
 
-    def run(self):
-        while not self._stop:
+    def poll(self):
+      
             self._logger.debug('System_Sensor dispatching trigger')
-            count = self.sensor_service.get_value('new_proj.count') or 0
-            payload = {'greeting': 'Yo, StackStorm!', 'count': int(count) + 1}}
+            payload = {'greeting': 'Yo, StackStorm!'}
             self.sensor_service.dispatch(trigger='new_proj.event1', payload=payload)
-            self.sensor_service.set_value('new_proj.count', payload['count'])
-            eventlet.sleep(60)
+            
+           
 
     def cleanup(self):
-        self._stop = True
+        pass
 
    
     def add_trigger(self, trigger):
