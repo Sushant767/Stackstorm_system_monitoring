@@ -1,5 +1,5 @@
 ---
-name: on_hello_event1
+name: Rule_for_event1
 pack: new_proj
 description: Sample rule firing on new_proj.event1.
 enabled: true
@@ -7,4 +7,4 @@ trigger:
     type: new_proj.event1
 action:
     ref: new_proj.mcpu
- 
+ #executes action new_proj.mcpu

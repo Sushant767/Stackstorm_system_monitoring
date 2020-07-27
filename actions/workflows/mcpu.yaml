@@ -1,7 +1,7 @@
 version: 1.0
 
 description: >
-    A workflow that monitors average cpu consumption and memory usages. If any of these parameters go beyond threshold it generates an alert to the slack channel-"mychannel".
+    A workflow that monitors average cpu consumption and memory usages. If any of these parameters go beyond threshold it generates an alert message to the slack channel-"mychannel".
 input:
   - cmd_cpu
   - cmd_results_cpu
@@ -19,7 +19,7 @@ vars:
 tasks:
 
    setup_task:
-     #parallel task for cpu and memory monitoring
+     #parallel task for checking cpu consumption and memory usage and subsequently generating alert message to slack channel if limit is crossed.
      next:
       - do:
           - task_cpu
@@ -28,11 +28,11 @@ tasks:
    task_cpu:
     action: core.local cmd=<% ctx(cmd_cpu) %>
     next:
-      - when: <% succeeded() and result().stdout <= 20 %>
+      - when: <% succeeded() and result().stdout <= 10 %>
         publish: var_cpu=<% result().stdout %>
         do:
           - post_cpu_success_to_slack
-      - when: <% succeeded() and result().stdout >= 20 %>
+      - when: <% succeeded() and result().stdout >= 10 %>
         publish: var_cpu=<% result().stdout %>
         do: 
           - perform_cpu_analysis
@@ -64,11 +64,11 @@ tasks:
    task_mem:
     action: core.local cmd=<% ctx(cmd_mem) %>
     next:
-      - when: <% succeeded() and result().stdout <= 40 %>
+      - when: <% succeeded() and result().stdout <= 70 %>
         publish: var_mem=<% result().stdout %>
         do:
           - post_mem_success_to_slack
-      - when: <% succeeded() and result().stdout >= 40 %>
+      - when: <% succeeded() and result().stdout >= 70 %>
         publish: var_mem=<% result().stdout %>
         do: 
           - perform_mem_analysis

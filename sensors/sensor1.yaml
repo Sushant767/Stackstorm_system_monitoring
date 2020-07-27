@@ -1,10 +1,10 @@
 ---
-class_name: "HelloSensor"
+class_name: "System_Sensor"
 entry_point: "sensor1.py"
-description: "Test sensor that emits triggers."
+description: "System sensor that emits triggers."
 trigger_types:
   -
     name: "event1"
-    description: "An example trigger."
+    description: "generating trigger."
     payload_schema:
       type: "object"

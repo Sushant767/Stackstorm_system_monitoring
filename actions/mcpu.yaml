@@ -1,7 +1,7 @@
 
 name: mcpu
 pack: new_proj
-description: Run a series of simulated actions
+description: Run a series of actions and sends an alert to slack channel whenever cpu utilization % and memory usage % exceeds above a limit.
 enabled: true
 runner_type: orquesta
 entry_point: workflows/mcpu.yaml
@@ -11,17 +11,20 @@ parameters:
        required: true
        type: string
        default:  mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf(100 - $field) }'
+    #linux command on system executed to check average %cpu utilization by a process
    cmd_results_cpu:
        required: true
        type: string
        default: ps -eo pid,pcpu,user,args --sort=-%cpu | head -6 | head -c 1000
+    #linux command on system executed to get analysis/details of %cpu utilization by top 5 processes
    cmd_mem:
        required: true
        type: string
        default:  free | awk 'FNR == 3 {print $3/($3+$4)*100}'
+    #linux command on system executed to check overall memory used 
    cmd_results_mem:
        required: true
        type: string
        default: ps -eo pid,ppid,cmd,%mem --sort=-%mem | head -6 | head -c 1000
-
-
+    #linux command on system executed to get analysis/details of %memory usage by top 5 processes
+    
