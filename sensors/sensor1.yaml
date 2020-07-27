@@ -2,7 +2,7 @@
 class_name: "System_Sensor"
 entry_point: "sensor1.py"
 description: "System sensor that emits triggers."
-poll_interval: 5
+poll_interval: 300
 trigger_types:
   -
     name: "event1"
