@@ -1,10 +1,10 @@
 ---
 name: on_hello_event1
-pack: hello_st2
-description: Sample rule firing on hello_st2.event1.
+pack: new_proj
+description: Sample rule firing on new_proj.event1.
 enabled: true
 trigger:
-    type: hello_st2.event1
+    type: new_proj.event1
 action:
-    ref: hello_st2.greet
+    ref: new_proj.mcpu
  
