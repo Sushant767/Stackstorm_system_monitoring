@@ -20,7 +20,7 @@ parameters:
    cmd_mem:
        required: true
        type: string
-       default:  free | awk 'FNR == 3 {print $3/($3+$4)*100}'
+       default:  free | awk 'FNR == 3 {print $3/($2)*100}'
     #linux command on system executed to check overall memory used 
    cmd_results_mem:
        required: true

@@ -28,11 +28,11 @@ tasks:
    task_cpu:
     action: core.local cmd=<% ctx(cmd_cpu) %>
     next:
-      - when: <% succeeded() and result().stdout <= 15 %>
+      - when: <% succeeded() and result().stdout <= 50 %>
         publish: var_cpu=<% result().stdout %>
         do:
           - post_cpu_success_to_slack
-      - when: <% succeeded() and result().stdout >= 15 %>
+      - when: <% succeeded() and result().stdout >= 50 %>
         publish: var_cpu=<% result().stdout %>
         do: 
           - perform_cpu_analysis
