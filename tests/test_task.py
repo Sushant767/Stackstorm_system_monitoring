@@ -11,6 +11,7 @@ class WorkflowConductorExtendedTaskTest(test_base.WorkflowConductorTest):
 
         description: >
         A workflow that monitors average cpu consumption and memory usages. If any of these parameters go beyond threshold it generates an alert message to the slack channel-"mychannel".
+        
         input:
         - cmd_cpu
         - cmd_results_cpu
