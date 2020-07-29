@@ -29,24 +29,14 @@ class WorkflowConductorExtendedTaskTest(test_base.WorkflowConductorTest):
           next:
               - do:
                   - task_cpu
-                  - task_mem
+                 
    
         task_cpu:
           action: core.local cmd=<% ctx(cmd_cpu) %>
           next:
-              - when: <% succeeded() and result().stdout <= 50 %>
-                publish: var_cpu=<% result().stdout %>
-                do:
+              - do:
                   - post_cpu_success_to_slack
-              - when: <% succeeded() and result().stdout >= 50 %>
-                publish: var_cpu=<% result().stdout %>
-                do: 
-                  - perform_cpu_analysis
-              - when: <% failed() %>
-                publish: stderr_cpu=<% result().stderr %>
-                do:
-                  - post_error_to_slack
-     
+       
         """
 
 
