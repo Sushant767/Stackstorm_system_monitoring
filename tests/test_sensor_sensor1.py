@@ -8,7 +8,7 @@ from sensor1 import System_Sensor
 class System_SensorTestCase(BaseSensorTestCase):
     sensor_cls = System_Sensor
 
-  def test_poll(self):
+    def test_poll(self):
         sensor = self.get_sensor_instance()
 
         sensor.poll()
