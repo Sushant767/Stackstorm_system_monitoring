@@ -26,27 +26,26 @@ class WorkflowConductorExtendedTaskTest(test_base.WorkflowConductorTest):
         tasks:
 
         setup_task:
-        #parallel task for checking cpu consumption and memory usage and subsequently generating alert message to slack channel if limit is crossed.
-        next:
-        - do:
-          - task_cpu
-          - task_mem
+          next:
+              - do:
+                  - task_cpu
+                  - task_mem
    
         task_cpu:
-        action: core.local cmd=<% ctx(cmd_cpu) %>
-            next:
-               - when: <% succeeded() and result().stdout <= 50 %>
-                 publish: var_cpu=<% result().stdout %>
-                 do:
-                    - post_cpu_success_to_slack
-               - when: <% succeeded() and result().stdout >= 50 %>
-                 publish: var_cpu=<% result().stdout %>
-                 do: 
-                    - perform_cpu_analysis
-               - when: <% failed() %>
-                 publish: stderr_cpu=<% result().stderr %>
-                 do:
-                    - post_error_to_slack
+          action: core.local cmd=<% ctx(cmd_cpu) %>
+          next:
+              - when: <% succeeded() and result().stdout <= 50 %>
+                publish: var_cpu=<% result().stdout %>
+                do:
+                  - post_cpu_success_to_slack
+              - when: <% succeeded() and result().stdout >= 50 %>
+                publish: var_cpu=<% result().stdout %>
+                do: 
+                  - perform_cpu_analysis
+              - when: <% failed() %>
+                publish: stderr_cpu=<% result().stderr %>
+                do:
+                  - post_error_to_slack
      
         """
 
